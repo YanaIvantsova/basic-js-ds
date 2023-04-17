@@ -1,46 +1,137 @@
 const { NotImplementedError } = require('../extensions/index.js');
 
-// const { Node } = require('../extensions/list-tree.js');
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.left = null;
+    this.right = null;
+  }
+}
 
 /**
 * Implement simple binary search tree according to task description
 * using Node from extensions
 */
 class BinarySearchTree {
+  constructor() {
+    this.rootNode = null;
+  }
+
+  add(data) {
+    const newNode = new Node(data);
+    if (this.rootNode === null) {
+      this.rootNode = newNode;
+    } else {
+      this.insertNode(this.rootNode, newNode);
+    }
+  }
+
+  insertNode(node, newNode) {
+    if (newNode.data < node.data) {
+      if (node.left === null) {
+        node.left = newNode;
+      } else {
+        this.insertNode(node.left, newNode);
+      }
+    } else {
+      if (node.right === null) {
+        node.right = newNode;
+      } else {
+        this.insertNode(node.right, newNode);
+      }
+    }
+  }
 
   root() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+    return this.rootNode;
   }
 
-  add(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  has(data) {
+    let currentNode = this.rootNode;
+    while (currentNode) {
+      if (data === currentNode.data) {
+        return true;
+      } else if (data < currentNode.data) {
+        currentNode = currentNode.left;
+      } else {
+        currentNode = currentNode.right;
+      }
+    }
+    return false;
   }
 
-  has(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  find(data) {
+    let currentNode = this.rootNode;
+    while (currentNode) {
+      if (data === currentNode.data) {
+        return currentNode;
+      } else if (data < currentNode.data) {
+        currentNode = currentNode.left;
+      } else {
+        currentNode = currentNode.right;
+      }
+    }
+    return null;
   }
 
-  find(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  remove(data) {
+    this.root = this.removeNode(this.rootNode, data);
   }
 
-  remove(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  removeNode(currentNode, data) {
+    if (!currentNode) {
+      return null;
+    }
+
+    if (data === currentNode.data) {
+      if (!currentNode.left && !currentNode.right) {
+        return null;
+      } else if (!currentNode.left) {
+        return currentNode.right;
+      } else if (!currentNode.right) {
+        return currentNode.left;
+      } else {
+        const smallestNode = this.findSmallestNode(currentNode.right);
+        currentNode.data = smallestNode.data;
+        currentNode.right = this.removeNode(currentNode.right, smallestNode.data);
+        return currentNode;
+      }
+    } else if (data < currentNode.data) {
+      currentNode.left = this.removeNode(currentNode.left, data);
+      return currentNode;
+    } else {
+      currentNode.right = this.removeNode(currentNode.right, data);
+      return currentNode;
+    }
+  }
+
+  findSmallestNode(currentNode) {
+    while (currentNode.left) {
+      currentNode = currentNode.left;
+    }
+    return currentNode;
   }
 
   min() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+    if (!this.rootNode) {
+      return null;
+    }
+    let currentNode = this.rootNode;
+    while (currentNode.left) {
+      currentNode = currentNode.left;
+    }
+    return currentNode.data;
   }
 
   max() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+    if (!this.rootNode) {
+      return null;
+    }
+    let currentNode = this.rootNode;
+    while (currentNode.right) {
+      currentNode = currentNode.right;
+    }
+    return currentNode.data;
   }
 }
 
